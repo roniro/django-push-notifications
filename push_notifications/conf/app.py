@@ -72,6 +72,7 @@ class AppConfig(BaseConfig):
 	"""
 
 	def __init__(self, settings=None):
+		self.has_token_creds_map = dict()
 		# supports overriding the settings to be loaded. Will load from ..settings by default.
 		self._settings = settings or SETTINGS
 
@@ -136,9 +137,11 @@ class AppConfig(BaseConfig):
 		has_cert_creds = APNS_SETTINGS_CERT_CREDS in \
 			application_config.keys()
 		self.has_token_creds = True
+		self.has_token_creds_map[application_id] = True
 		for token_setting in APNS_AUTH_CREDS_REQUIRED:
 			if token_setting not in application_config.keys():
 				self.has_token_creds = False
+				self.has_token_creds_map[application_id] = False
 				break
 
 		if not has_cert_creds and not self.has_token_creds:
@@ -291,7 +294,7 @@ class AppConfig(BaseConfig):
 		return self._get_application_settings(application_id, "FCM", "FIREBASE_APP")
 
 	def has_auth_token_creds(self, application_id=None):
-		return self.has_token_creds
+		return self.has_token_creds_map.get(application_id, self.has_token_creds)
 
 	def get_max_recipients(self, application_id=None):
 		return self._get_application_settings(application_id, "FCM", "MAX_RECIPIENTS")

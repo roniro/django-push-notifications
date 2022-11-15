@@ -12,6 +12,7 @@ build
 
 # virtualenv
 .env
+.python-version
 
 # tox
 .tox

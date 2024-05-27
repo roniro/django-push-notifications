@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -64,6 +66,8 @@ class GCMDeviceQuerySet(models.query.QuerySet):
 			if not isinstance(message, messaging.Message):
 				data = kwargs.pop("extra", {})
 				if message is not None:
+                    if type(message) == dict:
+                        message = json.dumps(message)
 					data["message"] = message
 				# transform legacy data to new message object
 				message = dict_to_fcm_message(data, **kwargs)
@@ -117,6 +121,8 @@ class GCMDevice(Device):
 		if not isinstance(message, messaging.Message):
 			data = kwargs.pop("extra", {})
 			if message is not None:
+                if type(message) == dict:
+                    message = json.dumps(message)
 				data["message"] = message
 			# transform legacy data to new message object
 			message = dict_to_fcm_message(data, **kwargs)
